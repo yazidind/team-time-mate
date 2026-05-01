@@ -7,11 +7,26 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Plus, FileText } from "lucide-react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { format } from "date-fns";
 import { id as idLocale } from "date-fns/locale";
 import { toast } from "sonner";
+import { parseLocalDate } from "@/lib/date";
+
+type LeaveType = "sakit" | "cuti" | "izin";
 
 export const Route = createFileRoute("/app/izin")({
   component: IzinPage,
@@ -27,7 +42,7 @@ function IzinPage() {
     .sort((a, b) => b.createdAt.localeCompare(a.createdAt));
 
   const [open, setOpen] = useState(false);
-  const [type, setType] = useState<"sakit" | "cuti" | "izin">("sakit");
+  const [type, setType] = useState<LeaveType>("sakit");
   const [start, setStart] = useState("");
   const [end, setEnd] = useState("");
   const [reason, setReason] = useState("");
@@ -35,6 +50,9 @@ function IzinPage() {
   const submit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!start || !end || !reason) return toast.error("Lengkapi semua field");
+    if (parseLocalDate(end) < parseLocalDate(start)) {
+      return toast.error("Tanggal selesai tidak boleh sebelum tanggal mulai");
+    }
     addLeave({
       id: `l-${Date.now()}`,
       userId: user.id,
@@ -69,8 +87,10 @@ function IzinPage() {
             <form onSubmit={submit} className="space-y-3">
               <div>
                 <Label>Jenis</Label>
-                <Select value={type} onValueChange={(v: any) => setType(v)}>
-                  <SelectTrigger className="mt-1.5"><SelectValue /></SelectTrigger>
+                <Select value={type} onValueChange={(v) => setType(v as LeaveType)}>
+                  <SelectTrigger className="mt-1.5">
+                    <SelectValue />
+                  </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="sakit">Sakit</SelectItem>
                     <SelectItem value="cuti">Cuti</SelectItem>
@@ -81,18 +101,35 @@ function IzinPage() {
               <div className="grid grid-cols-2 gap-2">
                 <div>
                   <Label>Mulai</Label>
-                  <Input type="date" value={start} onChange={(e) => setStart(e.target.value)} className="mt-1.5" />
+                  <Input
+                    type="date"
+                    value={start}
+                    onChange={(e) => setStart(e.target.value)}
+                    className="mt-1.5"
+                  />
                 </div>
                 <div>
                   <Label>Selesai</Label>
-                  <Input type="date" value={end} onChange={(e) => setEnd(e.target.value)} className="mt-1.5" />
+                  <Input
+                    type="date"
+                    value={end}
+                    onChange={(e) => setEnd(e.target.value)}
+                    className="mt-1.5"
+                  />
                 </div>
               </div>
               <div>
                 <Label>Alasan</Label>
-                <Textarea value={reason} onChange={(e) => setReason(e.target.value)} className="mt-1.5" rows={3} />
+                <Textarea
+                  value={reason}
+                  onChange={(e) => setReason(e.target.value)}
+                  className="mt-1.5"
+                  rows={3}
+                />
               </div>
-              <Button type="submit" className="w-full bg-gradient-primary">Kirim</Button>
+              <Button type="submit" className="w-full bg-gradient-primary">
+                Kirim
+              </Button>
             </form>
           </DialogContent>
         </Dialog>
@@ -111,8 +148,8 @@ function IzinPage() {
                 <div className="flex-1 min-w-0">
                   <p className="font-semibold text-sm capitalize">{l.type}</p>
                   <p className="text-xs text-muted-foreground">
-                    {format(new Date(l.startDate), "d MMM", { locale: idLocale })} —{" "}
-                    {format(new Date(l.endDate), "d MMM yyyy", { locale: idLocale })}
+                    {format(parseLocalDate(l.startDate), "d MMM", { locale: idLocale })} —{" "}
+                    {format(parseLocalDate(l.endDate), "d MMM yyyy", { locale: idLocale })}
                   </p>
                   <p className="text-sm mt-2">{l.reason}</p>
                 </div>
@@ -121,8 +158,8 @@ function IzinPage() {
                     l.status === "approved"
                       ? "bg-success/15 text-success"
                       : l.status === "rejected"
-                      ? "bg-destructive/15 text-destructive"
-                      : "bg-warning/15 text-warning-foreground"
+                        ? "bg-destructive/15 text-destructive"
+                        : "bg-warning/15 text-warning-foreground"
                   }`}
                 >
                   {l.status.toUpperCase()}

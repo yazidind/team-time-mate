@@ -6,6 +6,7 @@ import { Check, X } from "lucide-react";
 import { format } from "date-fns";
 import { id as idLocale } from "date-fns/locale";
 import { toast } from "sonner";
+import { parseLocalDate } from "@/lib/date";
 
 export const Route = createFileRoute("/admin/izin")({
   component: AdminIzin,
@@ -39,8 +40,8 @@ function AdminIzin() {
               <div className="min-w-0">
                 <p className="font-semibold text-sm">{u?.name}</p>
                 <p className="text-xs text-muted-foreground capitalize">
-                  {l.type} · {format(new Date(l.startDate), "d MMM", { locale: idLocale })} —{" "}
-                  {format(new Date(l.endDate), "d MMM", { locale: idLocale })}
+                  {l.type} · {format(parseLocalDate(l.startDate), "d MMM", { locale: idLocale })} —{" "}
+                  {format(parseLocalDate(l.endDate), "d MMM", { locale: idLocale })}
                 </p>
               </div>
               <span

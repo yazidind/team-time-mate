@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useCurrentUser, useStore, formatRupiah } from "@/lib/store";
+import { useCurrentUser, useStore, formatRupiah, type Payroll } from "@/lib/store";
 import { Card } from "@/components/ui/card";
 import { Wallet, Download } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -16,7 +16,7 @@ function SlipPage() {
     .filter((p) => p.userId === user.id)
     .sort((a, b) => b.period.localeCompare(a.period));
 
-  const exportExcel = (p: any) => {
+  const exportExcel = (p: Payroll) => {
     const ws = XLSX.utils.aoa_to_sheet([
       ["SLIP GAJI"],
       [],
@@ -33,6 +33,7 @@ function SlipPage() {
       [],
       ["Hari Kerja", p.workDays],
       ["Hadir", p.daysPresent],
+      ["Izin Dibayar", p.paidLeaveDays ?? 0],
     ]);
     ws["!cols"] = [{ wch: 30 }, { wch: 18 }];
     const wb = XLSX.utils.book_new();
@@ -49,7 +50,9 @@ function SlipPage() {
         <Card className="p-8 text-center border-0 shadow-card rounded-2xl">
           <Wallet className="h-10 w-10 mx-auto text-muted-foreground mb-2" />
           <p className="text-sm text-muted-foreground">Belum ada slip gaji.</p>
-          <p className="text-xs text-muted-foreground mt-1">Admin perlu generate payroll terlebih dahulu.</p>
+          <p className="text-xs text-muted-foreground mt-1">
+            Admin perlu generate payroll terlebih dahulu.
+          </p>
         </Card>
       ) : (
         payrolls.map((p) => (
@@ -74,7 +77,8 @@ function SlipPage() {
               <p className="text-xl font-bold text-primary">{formatRupiah(p.total)}</p>
             </div>
             <p className="text-xs text-muted-foreground mt-2">
-              Hadir {p.daysPresent} dari {p.workDays} hari kerja
+              Hadir {p.daysPresent}
+              {p.paidLeaveDays ? ` + izin ${p.paidLeaveDays}` : ""} dari {p.workDays} hari kerja
             </p>
           </Card>
         ))

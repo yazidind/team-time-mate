@@ -8,6 +8,7 @@ import { Label } from "@/components/ui/label";
 import { Sparkles, Download } from "lucide-react";
 import * as XLSX from "xlsx";
 import { toast } from "sonner";
+import { formatLocalMonth } from "@/lib/date";
 
 export const Route = createFileRoute("/admin/payroll")({
   component: AdminPayroll,
@@ -18,7 +19,7 @@ function AdminPayroll() {
   const payrolls = useStore((s) => s.payrolls);
   const generatePayroll = useStore((s) => s.generatePayroll);
 
-  const [period, setPeriod] = useState(new Date().toISOString().slice(0, 7));
+  const [period, setPeriod] = useState(formatLocalMonth());
 
   const periodPayrolls = payrolls.filter((p) => p.period === period);
   const total = periodPayrolls.reduce((s, p) => s + p.total, 0);
@@ -38,6 +39,7 @@ function AdminPayroll() {
         Periode: p.period,
         "Hari Kerja": p.workDays,
         Hadir: p.daysPresent,
+        "Izin Dibayar": p.paidLeaveDays ?? 0,
         "Gaji Pokok": p.baseSalary,
         Tunjangan: p.allowance,
         Lembur: p.overtime,
@@ -48,7 +50,7 @@ function AdminPayroll() {
     const ws = XLSX.utils.json_to_sheet(rows);
     ws["!cols"] = [
       { wch: 22 }, { wch: 18 }, { wch: 10 }, { wch: 10 }, { wch: 8 },
-      { wch: 14 }, { wch: 14 }, { wch: 12 }, { wch: 12 }, { wch: 16 },
+      { wch: 12 }, { wch: 14 }, { wch: 14 }, { wch: 12 }, { wch: 12 }, { wch: 16 },
     ];
     const wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, `Payroll-${period}`);
@@ -101,7 +103,8 @@ function AdminPayroll() {
                   <div>
                     <p className="font-semibold text-sm">{u?.name}</p>
                     <p className="text-xs text-muted-foreground">
-                      Hadir {p.daysPresent}/{p.workDays} hari
+                      Hadir {p.daysPresent}
+                      {p.paidLeaveDays ? ` + izin ${p.paidLeaveDays}` : ""}/{p.workDays} hari
                     </p>
                   </div>
                   <p className="font-bold text-primary">{formatRupiah(p.total)}</p>

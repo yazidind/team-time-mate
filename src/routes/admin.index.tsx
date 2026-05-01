@@ -1,9 +1,10 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useStore, formatRupiah } from "@/lib/store";
 import { Card } from "@/components/ui/card";
-import { Users, ClipboardCheck, FileText, Wallet, TrendingUp } from "lucide-react";
+import { Users, ClipboardCheck, FileText, Wallet, TrendingUp, type LucideIcon } from "lucide-react";
 import { format } from "date-fns";
 import { id as idLocale } from "date-fns/locale";
+import { formatLocalDate, isScheduledWorkDate, parseLocalDate } from "@/lib/date";
 
 export const Route = createFileRoute("/admin/")({
   component: AdminHome,
@@ -15,9 +16,17 @@ function AdminHome() {
   const leaves = useStore((s) => s.leaves);
   const payrolls = useStore((s) => s.payrolls);
 
-  const today = new Date().toISOString().slice(0, 10);
+  const today = formatLocalDate();
   const employees = users.filter((u) => u.role === "karyawan");
-  const todayAttCount = attendance.filter((a) => a.date === today && a.clockIn).length;
+  const todayDate = parseLocalDate(today);
+  const scheduledEmployees = employees.filter((u) => isScheduledWorkDate(todayDate, u.offDay ?? 0));
+  const scheduledEmployeeIds = new Set(scheduledEmployees.map((u) => u.id));
+  const todayAttCount = attendance.filter(
+    (a) => a.date === today && a.status === "hadir" && scheduledEmployeeIds.has(a.userId),
+  ).length;
+  const todaySickOrPermitCount = attendance.filter(
+    (a) => a.date === today && (a.status === "sakit" || a.status === "izin"),
+  ).length;
   const pendingLeaves = leaves.filter((l) => l.status === "pending").length;
   const totalPayroll = payrolls
     .filter((p) => p.period === today.slice(0, 7))
@@ -30,8 +39,8 @@ function AdminHome() {
         <p className="font-semibold">{format(new Date(), "EEEE, d MMMM yyyy", { locale: idLocale })}</p>
         <div className="mt-4 grid grid-cols-2 gap-3">
           <Stat label="Total Karyawan" value={employees.length.toString()} icon={Users} />
-          <Stat label="Hadir Hari Ini" value={`${todayAttCount}/${employees.length}`} icon={ClipboardCheck} />
-          <Stat label="Izin Pending" value={pendingLeaves.toString()} icon={FileText} />
+          <Stat label="Hadir Hari Ini" value={`${todayAttCount}/${scheduledEmployees.length}`} icon={ClipboardCheck} />
+          <Stat label="Sakit/Izin" value={todaySickOrPermitCount.toString()} icon={FileText} />
           <Stat label="Payroll Bulan Ini" value={totalPayroll ? formatRupiah(totalPayroll) : "—"} icon={Wallet} small />
         </div>
       </Card>
@@ -61,9 +70,7 @@ function AdminHome() {
               return (
                 <div key={a.id} className="flex items-center justify-between text-sm">
                   <span>{u?.name}</span>
-                  <span className="text-muted-foreground">
-                    {a.clockIn ? format(new Date(a.clockIn), "HH:mm") : "—"}
-                  </span>
+                  <span className="text-muted-foreground">{a.status.toUpperCase()}</span>
                 </div>
               );
             })}
@@ -76,7 +83,17 @@ function AdminHome() {
   );
 }
 
-function Stat({ label, value, icon: Icon, small }: { label: string; value: string; icon: any; small?: boolean }) {
+function Stat({
+  label,
+  value,
+  icon: Icon,
+  small,
+}: {
+  label: string;
+  value: string;
+  icon: LucideIcon;
+  small?: boolean;
+}) {
   return (
     <div className="p-3 rounded-xl bg-background">
       <Icon className="h-4 w-4 text-primary mb-1.5" />
@@ -86,7 +103,17 @@ function Stat({ label, value, icon: Icon, small }: { label: string; value: strin
   );
 }
 
-function Tile({ to, icon: Icon, label, desc }: { to: string; icon: any; label: string; desc: string }) {
+function Tile({
+  to,
+  icon: Icon,
+  label,
+  desc,
+}: {
+  to: string;
+  icon: LucideIcon;
+  label: string;
+  desc: string;
+}) {
   return (
     <Link to={to}>
       <Card className="p-4 border-0 shadow-card rounded-2xl hover:shadow-elegant active:scale-95 transition">

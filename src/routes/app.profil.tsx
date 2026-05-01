@@ -1,7 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useCurrentUser, formatRupiah } from "@/lib/store";
 import { Card } from "@/components/ui/card";
-import { Mail, Briefcase, Calendar, Wallet } from "lucide-react";
+import { Mail, Briefcase, Calendar, Wallet, CalendarOff } from "lucide-react";
+import { dayNames } from "@/lib/date";
 
 export const Route = createFileRoute("/app/profil")({
   component: ProfilPage,
@@ -22,6 +23,7 @@ function ProfilPage() {
       <Card className="border-0 shadow-card rounded-2xl divide-y divide-border overflow-hidden">
         <Item icon={Mail} label="Email" value={user.email} />
         <Item icon={Briefcase} label="Posisi" value={user.position} />
+        <Item icon={CalendarOff} label="Hari Off" value={dayNames[user.offDay ?? 0]} />
         <Item icon={Calendar} label="Bergabung" value={user.joinDate} />
         <Item icon={Wallet} label="Gaji Pokok" value={formatRupiah(user.baseSalary)} />
         <Item icon={Wallet} label="Tunjangan" value={formatRupiah(user.allowance)} />

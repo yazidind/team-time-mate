@@ -5,9 +5,11 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Plus, Pencil, Trash2 } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { toast } from "sonner";
+import { dayNames, formatLocalDate } from "@/lib/date";
 
 export const Route = createFileRoute("/admin/karyawan")({
   component: KaryawanAdmin,
@@ -20,6 +22,7 @@ const empty = {
   position: "",
   baseSalary: 5000000,
   allowance: 500000,
+  offDay: 0,
 };
 
 function KaryawanAdmin() {
@@ -36,7 +39,15 @@ function KaryawanAdmin() {
   const startAdd = () => { setEditing(null); setForm(empty); setOpen(true); };
   const startEdit = (u: User) => {
     setEditing(u);
-    setForm({ name: u.name, email: u.email, password: u.password, position: u.position, baseSalary: u.baseSalary, allowance: u.allowance });
+    setForm({
+      name: u.name,
+      email: u.email,
+      password: u.password,
+      position: u.position,
+      baseSalary: u.baseSalary,
+      allowance: u.allowance,
+      offDay: u.offDay ?? 0,
+    });
     setOpen(true);
   };
 
@@ -51,7 +62,7 @@ function KaryawanAdmin() {
         id: `u-${Date.now()}`,
         ...form,
         role: "karyawan",
-        joinDate: new Date().toISOString().slice(0, 10),
+        joinDate: formatLocalDate(),
       });
       toast.success("Karyawan ditambahkan");
     }
@@ -84,6 +95,23 @@ function KaryawanAdmin() {
               <Field label="Email"><Input type="email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} /></Field>
               <Field label="Password"><Input value={form.password} onChange={(e) => setForm({ ...form, password: e.target.value })} /></Field>
               <Field label="Posisi"><Input value={form.position} onChange={(e) => setForm({ ...form, position: e.target.value })} /></Field>
+              <Field label="Hari Off">
+                <Select
+                  value={String(form.offDay)}
+                  onValueChange={(value) => setForm({ ...form, offDay: Number(value) })}
+                >
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {dayNames.map((day, index) => (
+                      <SelectItem key={day} value={String(index)}>
+                        {day}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </Field>
               <Field label="Gaji Pokok"><Input type="number" value={form.baseSalary} onChange={(e) => setForm({ ...form, baseSalary: +e.target.value })} /></Field>
               <Field label="Tunjangan"><Input type="number" value={form.allowance} onChange={(e) => setForm({ ...form, allowance: +e.target.value })} /></Field>
               <Button type="submit" className="w-full bg-gradient-primary">Simpan</Button>
@@ -102,6 +130,9 @@ function KaryawanAdmin() {
               <div className="flex-1 min-w-0">
                 <p className="font-semibold text-sm truncate">{u.name}</p>
                 <p className="text-xs text-muted-foreground truncate">{u.position}</p>
+                <p className="text-xs text-muted-foreground truncate">
+                  Off: {dayNames[u.offDay ?? 0]}
+                </p>
                 <p className="text-xs text-primary font-medium mt-0.5">{formatRupiah(u.baseSalary + u.allowance)}</p>
               </div>
               <div className="flex gap-1">
