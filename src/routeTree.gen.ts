@@ -13,6 +13,11 @@ import { Route as LoginRouteImport } from './routes/login'
 import { Route as AppRouteImport } from './routes/app'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AppIndexRouteImport } from './routes/app.index'
+import { Route as AppSlipRouteImport } from './routes/app.slip'
+import { Route as AppProfilRouteImport } from './routes/app.profil'
+import { Route as AppIzinRouteImport } from './routes/app.izin'
+import { Route as AppAbsensiRouteImport } from './routes/app.absensi'
 
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
@@ -34,38 +39,104 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AppIndexRoute = AppIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppSlipRoute = AppSlipRouteImport.update({
+  id: '/slip',
+  path: '/slip',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppProfilRoute = AppProfilRouteImport.update({
+  id: '/profil',
+  path: '/profil',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppIzinRoute = AppIzinRouteImport.update({
+  id: '/izin',
+  path: '/izin',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppAbsensiRoute = AppAbsensiRouteImport.update({
+  id: '/absensi',
+  path: '/absensi',
+  getParentRoute: () => AppRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/admin': typeof AdminRoute
-  '/app': typeof AppRoute
+  '/app': typeof AppRouteWithChildren
   '/login': typeof LoginRoute
+  '/app/absensi': typeof AppAbsensiRoute
+  '/app/izin': typeof AppIzinRoute
+  '/app/profil': typeof AppProfilRoute
+  '/app/slip': typeof AppSlipRoute
+  '/app/': typeof AppIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/admin': typeof AdminRoute
-  '/app': typeof AppRoute
   '/login': typeof LoginRoute
+  '/app/absensi': typeof AppAbsensiRoute
+  '/app/izin': typeof AppIzinRoute
+  '/app/profil': typeof AppProfilRoute
+  '/app/slip': typeof AppSlipRoute
+  '/app': typeof AppIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/admin': typeof AdminRoute
-  '/app': typeof AppRoute
+  '/app': typeof AppRouteWithChildren
   '/login': typeof LoginRoute
+  '/app/absensi': typeof AppAbsensiRoute
+  '/app/izin': typeof AppIzinRoute
+  '/app/profil': typeof AppProfilRoute
+  '/app/slip': typeof AppSlipRoute
+  '/app/': typeof AppIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/admin' | '/app' | '/login'
+  fullPaths:
+    | '/'
+    | '/admin'
+    | '/app'
+    | '/login'
+    | '/app/absensi'
+    | '/app/izin'
+    | '/app/profil'
+    | '/app/slip'
+    | '/app/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/admin' | '/app' | '/login'
-  id: '__root__' | '/' | '/admin' | '/app' | '/login'
+  to:
+    | '/'
+    | '/admin'
+    | '/login'
+    | '/app/absensi'
+    | '/app/izin'
+    | '/app/profil'
+    | '/app/slip'
+    | '/app'
+  id:
+    | '__root__'
+    | '/'
+    | '/admin'
+    | '/app'
+    | '/login'
+    | '/app/absensi'
+    | '/app/izin'
+    | '/app/profil'
+    | '/app/slip'
+    | '/app/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AdminRoute: typeof AdminRoute
-  AppRoute: typeof AppRoute
+  AppRoute: typeof AppRouteWithChildren
   LoginRoute: typeof LoginRoute
 }
 
@@ -99,13 +170,66 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/app/': {
+      id: '/app/'
+      path: '/'
+      fullPath: '/app/'
+      preLoaderRoute: typeof AppIndexRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/slip': {
+      id: '/app/slip'
+      path: '/slip'
+      fullPath: '/app/slip'
+      preLoaderRoute: typeof AppSlipRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/profil': {
+      id: '/app/profil'
+      path: '/profil'
+      fullPath: '/app/profil'
+      preLoaderRoute: typeof AppProfilRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/izin': {
+      id: '/app/izin'
+      path: '/izin'
+      fullPath: '/app/izin'
+      preLoaderRoute: typeof AppIzinRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/absensi': {
+      id: '/app/absensi'
+      path: '/absensi'
+      fullPath: '/app/absensi'
+      preLoaderRoute: typeof AppAbsensiRouteImport
+      parentRoute: typeof AppRoute
+    }
   }
 }
+
+interface AppRouteChildren {
+  AppAbsensiRoute: typeof AppAbsensiRoute
+  AppIzinRoute: typeof AppIzinRoute
+  AppProfilRoute: typeof AppProfilRoute
+  AppSlipRoute: typeof AppSlipRoute
+  AppIndexRoute: typeof AppIndexRoute
+}
+
+const AppRouteChildren: AppRouteChildren = {
+  AppAbsensiRoute: AppAbsensiRoute,
+  AppIzinRoute: AppIzinRoute,
+  AppProfilRoute: AppProfilRoute,
+  AppSlipRoute: AppSlipRoute,
+  AppIndexRoute: AppIndexRoute,
+}
+
+const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AdminRoute: AdminRoute,
-  AppRoute: AppRoute,
+  AppRoute: AppRouteWithChildren,
   LoginRoute: LoginRoute,
 }
 export const routeTree = rootRouteImport
