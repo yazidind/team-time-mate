@@ -9,38 +9,218 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as LoginRouteImport } from './routes/login'
+import { Route as AppRouteImport } from './routes/app'
+import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AppIndexRouteImport } from './routes/app.index'
+import { Route as AdminIndexRouteImport } from './routes/admin.index'
+import { Route as AppSlipRouteImport } from './routes/app.slip'
+import { Route as AppProfilRouteImport } from './routes/app.profil'
+import { Route as AppIzinRouteImport } from './routes/app.izin'
+import { Route as AppAbsensiRouteImport } from './routes/app.absensi'
+import { Route as AdminPayrollRouteImport } from './routes/admin.payroll'
+import { Route as AdminKaryawanRouteImport } from './routes/admin.karyawan'
+import { Route as AdminIzinRouteImport } from './routes/admin.izin'
+import { Route as AdminAbsensiRouteImport } from './routes/admin.absensi'
 
+const LoginRoute = LoginRouteImport.update({
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AppRoute = AppRouteImport.update({
+  id: '/app',
+  path: '/app',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminRoute = AdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AppIndexRoute = AppIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AppRoute,
+} as any)
+const AdminIndexRoute = AdminIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AppSlipRoute = AppSlipRouteImport.update({
+  id: '/slip',
+  path: '/slip',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppProfilRoute = AppProfilRouteImport.update({
+  id: '/profil',
+  path: '/profil',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppIzinRoute = AppIzinRouteImport.update({
+  id: '/izin',
+  path: '/izin',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppAbsensiRoute = AppAbsensiRouteImport.update({
+  id: '/absensi',
+  path: '/absensi',
+  getParentRoute: () => AppRoute,
+} as any)
+const AdminPayrollRoute = AdminPayrollRouteImport.update({
+  id: '/payroll',
+  path: '/payroll',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminKaryawanRoute = AdminKaryawanRouteImport.update({
+  id: '/karyawan',
+  path: '/karyawan',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminIzinRoute = AdminIzinRouteImport.update({
+  id: '/izin',
+  path: '/izin',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminAbsensiRoute = AdminAbsensiRouteImport.update({
+  id: '/absensi',
+  path: '/absensi',
+  getParentRoute: () => AdminRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/admin': typeof AdminRouteWithChildren
+  '/app': typeof AppRouteWithChildren
+  '/login': typeof LoginRoute
+  '/admin/absensi': typeof AdminAbsensiRoute
+  '/admin/izin': typeof AdminIzinRoute
+  '/admin/karyawan': typeof AdminKaryawanRoute
+  '/admin/payroll': typeof AdminPayrollRoute
+  '/app/absensi': typeof AppAbsensiRoute
+  '/app/izin': typeof AppIzinRoute
+  '/app/profil': typeof AppProfilRoute
+  '/app/slip': typeof AppSlipRoute
+  '/admin/': typeof AdminIndexRoute
+  '/app/': typeof AppIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/login': typeof LoginRoute
+  '/admin/absensi': typeof AdminAbsensiRoute
+  '/admin/izin': typeof AdminIzinRoute
+  '/admin/karyawan': typeof AdminKaryawanRoute
+  '/admin/payroll': typeof AdminPayrollRoute
+  '/app/absensi': typeof AppAbsensiRoute
+  '/app/izin': typeof AppIzinRoute
+  '/app/profil': typeof AppProfilRoute
+  '/app/slip': typeof AppSlipRoute
+  '/admin': typeof AdminIndexRoute
+  '/app': typeof AppIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/admin': typeof AdminRouteWithChildren
+  '/app': typeof AppRouteWithChildren
+  '/login': typeof LoginRoute
+  '/admin/absensi': typeof AdminAbsensiRoute
+  '/admin/izin': typeof AdminIzinRoute
+  '/admin/karyawan': typeof AdminKaryawanRoute
+  '/admin/payroll': typeof AdminPayrollRoute
+  '/app/absensi': typeof AppAbsensiRoute
+  '/app/izin': typeof AppIzinRoute
+  '/app/profil': typeof AppProfilRoute
+  '/app/slip': typeof AppSlipRoute
+  '/admin/': typeof AdminIndexRoute
+  '/app/': typeof AppIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/admin'
+    | '/app'
+    | '/login'
+    | '/admin/absensi'
+    | '/admin/izin'
+    | '/admin/karyawan'
+    | '/admin/payroll'
+    | '/app/absensi'
+    | '/app/izin'
+    | '/app/profil'
+    | '/app/slip'
+    | '/admin/'
+    | '/app/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/login'
+    | '/admin/absensi'
+    | '/admin/izin'
+    | '/admin/karyawan'
+    | '/admin/payroll'
+    | '/app/absensi'
+    | '/app/izin'
+    | '/app/profil'
+    | '/app/slip'
+    | '/admin'
+    | '/app'
+  id:
+    | '__root__'
+    | '/'
+    | '/admin'
+    | '/app'
+    | '/login'
+    | '/admin/absensi'
+    | '/admin/izin'
+    | '/admin/karyawan'
+    | '/admin/payroll'
+    | '/app/absensi'
+    | '/app/izin'
+    | '/app/profil'
+    | '/app/slip'
+    | '/admin/'
+    | '/app/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AdminRoute: typeof AdminRouteWithChildren
+  AppRoute: typeof AppRouteWithChildren
+  LoginRoute: typeof LoginRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/app': {
+      id: '/app'
+      path: '/app'
+      fullPath: '/app'
+      preLoaderRoute: typeof AppRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin': {
+      id: '/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AdminRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -48,21 +228,121 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/app/': {
+      id: '/app/'
+      path: '/'
+      fullPath: '/app/'
+      preLoaderRoute: typeof AppIndexRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/admin/': {
+      id: '/admin/'
+      path: '/'
+      fullPath: '/admin/'
+      preLoaderRoute: typeof AdminIndexRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/app/slip': {
+      id: '/app/slip'
+      path: '/slip'
+      fullPath: '/app/slip'
+      preLoaderRoute: typeof AppSlipRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/profil': {
+      id: '/app/profil'
+      path: '/profil'
+      fullPath: '/app/profil'
+      preLoaderRoute: typeof AppProfilRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/izin': {
+      id: '/app/izin'
+      path: '/izin'
+      fullPath: '/app/izin'
+      preLoaderRoute: typeof AppIzinRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/absensi': {
+      id: '/app/absensi'
+      path: '/absensi'
+      fullPath: '/app/absensi'
+      preLoaderRoute: typeof AppAbsensiRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/admin/payroll': {
+      id: '/admin/payroll'
+      path: '/payroll'
+      fullPath: '/admin/payroll'
+      preLoaderRoute: typeof AdminPayrollRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/karyawan': {
+      id: '/admin/karyawan'
+      path: '/karyawan'
+      fullPath: '/admin/karyawan'
+      preLoaderRoute: typeof AdminKaryawanRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/izin': {
+      id: '/admin/izin'
+      path: '/izin'
+      fullPath: '/admin/izin'
+      preLoaderRoute: typeof AdminIzinRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/absensi': {
+      id: '/admin/absensi'
+      path: '/absensi'
+      fullPath: '/admin/absensi'
+      preLoaderRoute: typeof AdminAbsensiRouteImport
+      parentRoute: typeof AdminRoute
+    }
   }
 }
 
+interface AdminRouteChildren {
+  AdminAbsensiRoute: typeof AdminAbsensiRoute
+  AdminIzinRoute: typeof AdminIzinRoute
+  AdminKaryawanRoute: typeof AdminKaryawanRoute
+  AdminPayrollRoute: typeof AdminPayrollRoute
+  AdminIndexRoute: typeof AdminIndexRoute
+}
+
+const AdminRouteChildren: AdminRouteChildren = {
+  AdminAbsensiRoute: AdminAbsensiRoute,
+  AdminIzinRoute: AdminIzinRoute,
+  AdminKaryawanRoute: AdminKaryawanRoute,
+  AdminPayrollRoute: AdminPayrollRoute,
+  AdminIndexRoute: AdminIndexRoute,
+}
+
+const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
+
+interface AppRouteChildren {
+  AppAbsensiRoute: typeof AppAbsensiRoute
+  AppIzinRoute: typeof AppIzinRoute
+  AppProfilRoute: typeof AppProfilRoute
+  AppSlipRoute: typeof AppSlipRoute
+  AppIndexRoute: typeof AppIndexRoute
+}
+
+const AppRouteChildren: AppRouteChildren = {
+  AppAbsensiRoute: AppAbsensiRoute,
+  AppIzinRoute: AppIzinRoute,
+  AppProfilRoute: AppProfilRoute,
+  AppSlipRoute: AppSlipRoute,
+  AppIndexRoute: AppIndexRoute,
+}
+
+const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AdminRoute: AdminRouteWithChildren,
+  AppRoute: AppRouteWithChildren,
+  LoginRoute: LoginRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { createStart } from '@tanstack/react-start'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-  }
-}
